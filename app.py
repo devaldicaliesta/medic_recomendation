@@ -28,8 +28,9 @@ def recomendation_obat(obat):
 def home_page():
     return render_template("Home.html")
 
-@app.route("/recommendation", methods=["POST"])
+@app.route("/recommendation", methods=["POST", "GET"])
 def recommendation():
+    error = None
     if request.method == "POST":
         product_name = str(request.form["product_name"])
         df = recomendation_obat(product_name)
@@ -39,9 +40,13 @@ def recommendation():
         for _, row in df.iterrows():
             rows.append(list(enumerate(row, 1)))
 
-        return render_template("table.html", headers=headers, rows=rows)
+        return render_template("table.html", headers=headers, rows=rows, error=error)
     # else:
         # return render_template("Home.html")
+
+@app.errorhandler(500)
+def internal_error(error):
+    return "500 error"
 
 if __name__ == '__main__':
     app.run(debug=True)
