@@ -30,7 +30,6 @@ def home_page():
 
 @app.route("/recommendation", methods=["POST", "GET"])
 def recommendation():
-    error = None
     if request.method == "POST":
         product_name = str(request.form["product_name"])
         df = recomendation_obat(product_name)
@@ -40,7 +39,7 @@ def recommendation():
         for _, row in df.iterrows():
             rows.append(list(enumerate(row, 1)))
 
-        return render_template("table.html", headers=headers, rows=rows, error=error)
+        return render_template("table.html", headers=headers, rows=rows)
     # else:
         # return render_template("Home.html")
 
