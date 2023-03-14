@@ -28,7 +28,7 @@ def recomendation_obat(obat):
 def home_page():
     return render_template("Home.html")
 
-@app.route("/recommendation", methods=["POST", "GET"])
+@app.route("/recommendation", methods=["POST"])
 def recommendation():
     if request.method == "POST":
         product_name = str(request.form["product_name"])
