@@ -1,47 +1,30 @@
-
-from flask import Flask, request, make_response, render_template, redirect, url_for
-from flask.helpers import url_for
+import streamlit as st
 import pandas as pd
-# import warnings
-# warnings.filterwarnings('ignore')
 
-# Initialize Flask app
+# Load data and cosine similarity matrix
+data = pd.read_excel("data/data.xlsx")
+cosine_sim = pd.read_excel("data/cosine_sim.xlsx")
 
-app = Flask(__name__)
-
-def recomendation_obat(obat):
-    data = pd.read_excel("data/data.xlsx")
-    cosine_sim = pd.read_excel("data/cosine_sim.xlsx")
-    indexprod = int(data.loc[data['Drug Name'] == obat].index.values[0])
+def recommendation_obat(obat):
+    indexprod = int(data[data['Drug Name'] == obat].index.values[0])
     similar_review = list(enumerate(cosine_sim.iloc[indexprod]))
-    sorted_similar_review = sorted(similar_review, key=lambda x:x[1], reverse=True)
+    sorted_similar_review = sorted(similar_review, key=lambda x: x[1], reverse=True)
     aa = []
-    for i in range(1,6) :
+    for i in range(1, 6):
         aa.append(sorted_similar_review[i][0])
-    return data.iloc[aa,:7]
+    return data.iloc[aa, :7]
 
-# @app.route("/")
-# def home_page():
-#     return render_template("Home.html")
+def main():
+    st.title("Obat Recommendation App")
 
-@app.route("/")
-def home_page():
-    return render_template("Home.html")
-
-@app.route("/recommendation", methods=["POST"])
-def recommendation():
-    if request.method == "POST":
-        product_name = str(request.form["product_name"])
-        df = recomendation_obat(product_name)
-        headers = list(enumerate(df.columns, 1))
-        rows = []
-
-        for _, row in df.iterrows():
-            rows.append(list(enumerate(row, 1)))
-
-        return render_template("table.html", headers=headers, rows=rows)
-    # else:
-        # return render_template("Home.html")
+    product_name = st.text_input("Enter a drug name:")
+    if st.button("Recommend"):
+        if product_name:
+            recommended_df = recommendation_obat(product_name)
+            st.write("Recommended drugs:")
+            st.table(recommended_df)
+        else:
+            st.warning("Please enter a drug name.")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    main()
