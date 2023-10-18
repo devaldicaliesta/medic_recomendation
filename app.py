@@ -17,6 +17,10 @@ def recommendation_obat(obat):
 def main():
     st.title("Obat Recommendation App")
 
+    # Tampilkan data.xlsx
+    st.header("Data from data.xlsx")
+    st.dataframe(data)
+
     product_name = st.text_input("Enter a drug name:")
     if st.button("Recommend"):
         if product_name:
